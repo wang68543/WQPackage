@@ -3,13 +3,13 @@ use_frameworks!
 
 target 'WQPackage_Example' do
   pod 'WQPackage', :path => '../'
-  pod 'Moya'
-#  pod 'Moya/RxSwift'
-  pod 'RxSwift'
-  pod 'RxCocoa'
-  pod 'Alamofire'
-  pod 'RxAlamofire'
-  pod 'PromiseKit'
+#  pod 'Moya'
+  pod 'Moya/RxSwift'
+#  pod 'RxSwift'
+#  pod 'RxCocoa'
+#  pod 'Alamofire'
+#  pod 'RxAlamofire'
+#  pod 'PromiseKit'
   target 'WQPackage_Tests' do
     inherit! :search_paths
 

@@ -30,7 +30,11 @@ TODO: Add long description of the pod here.
 
   s.ios.deployment_target = '9.0'
 
-  s.source_files = 'WQPackage/Classes/**/*'
+  
+  s.subspec 'WQMoya' do |ss| 
+    ss.dependency 'Moya/RxSwift'
+    ss.source_files = 'WQPackage/Classes/WQMoya/*.swift' 
+  end
   
   # s.resource_bundles = {
   #   'WQPackage' => ['WQPackage/Assets/*.png']

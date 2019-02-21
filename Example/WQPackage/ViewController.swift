@@ -7,11 +7,17 @@
 //
 
 import UIKit
-
-class ViewController: UIViewController {
-
+import WQPackage
+public let sevice = RxMoyaService(metroProvider)
+class ViewController: UIViewController  {
+    
     override func viewDidLoad() {
         super.viewDidLoad()
+        sevice.request(.citymaplist).subscribe(onSuccess: { response in
+            
+        }) { error in
+            
+        }.disposed(by: self.rx.)
         // Do any additional setup after loading the view, typically from a nib.
     }
 

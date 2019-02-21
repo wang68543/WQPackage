@@ -1,50 +1,30 @@
 PODS:
   - Alamofire (4.8.1)
-  - Moya (12.0.1):
-    - Moya/Core (= 12.0.1)
   - Moya/Core (12.0.1):
     - Alamofire (~> 4.1)
     - Result (~> 4.0)
-  - PromiseKit (6.8.3):
-    - PromiseKit/CorePromise (= 6.8.3)
-    - PromiseKit/Foundation (= 6.8.3)
-    - PromiseKit/UIKit (= 6.8.3)
-  - PromiseKit/CorePromise (6.8.3)
-  - PromiseKit/Foundation (6.8.3):
-    - PromiseKit/CorePromise
-  - PromiseKit/UIKit (6.8.3):
-    - PromiseKit/CorePromise
-  - Result (4.1.0)
-  - RxAlamofire (4.3.0):
-    - RxAlamofire/Core (= 4.3.0)
-  - RxAlamofire/Core (4.3.0):
-    - Alamofire (~> 4.5)
-    - RxSwift (~> 4)
-  - RxAtomic (4.4.1)
-  - RxCocoa (4.4.1):
+  - Moya/RxSwift (12.0.1):
+    - Moya/Core
     - RxSwift (~> 4.0)
+  - Result (4.1.0)
+  - RxAtomic (4.4.1)
   - RxSwift (4.4.1):
     - RxAtomic (~> 4.4)
-  - WQPackage (0.1.0)
+  - WQPackage (0.1.0):
+    - WQPackage/WQMoya (= 0.1.0)
+  - WQPackage/WQMoya (0.1.0):
+    - Moya/RxSwift
 
 DEPENDENCIES:
-  - Alamofire
-  - Moya
-  - PromiseKit
-  - RxAlamofire
-  - RxCocoa
-  - RxSwift
+  - Moya/RxSwift
   - WQPackage (from `../`)
 
 SPEC REPOS:
   https://github.com/cocoapods/specs.git:
     - Alamofire
     - Moya
-    - PromiseKit
     - Result
-    - RxAlamofire
     - RxAtomic
-    - RxCocoa
     - RxSwift
 
 EXTERNAL SOURCES:
@@ -54,14 +34,11 @@ EXTERNAL SOURCES:
 SPEC CHECKSUMS:
   Alamofire: 16ce2c353fb72865124ddae8a57c5942388f4f11
   Moya: cf730b3cd9e005401ef37a85143aa141a12fd38f
-  PromiseKit: 94c6e781838c5bf4717677d0d882b0e7250c80fc
   Result: bd966fac789cc6c1563440b348ab2598cc24d5c7
-  RxAlamofire: 09624d0f2d48ed8b686e4eb4cf68e28cbd2df556
   RxAtomic: f8d6adc1ccb87a767811269e4875887bc74dbf19
-  RxCocoa: 2f35a76bf8887872e28a1914112395b11b8e0e64
   RxSwift: 92fcf68dfef21f3e2ab1965363d9e7b3d787597e
-  WQPackage: 9b03b591fcc137a672b24860c3f892a846ddd2ef
+  WQPackage: bac3bd1ed25f2f62fa1f6624610b49615db19402
 
-PODFILE CHECKSUM: 31e827f270cd61f0dcae11c2a36b30854abaea3d
+PODFILE CHECKSUM: be62b7befc0340c4f0aa26929663b89aa4aa44d1
 
 COCOAPODS: 1.6.0
