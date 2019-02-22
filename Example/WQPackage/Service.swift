@@ -16,6 +16,15 @@ final class Plugin: PluginType {
         return mRequest
     }
 }
+private func JSONResponseDataFormatter(_ data: Data) -> Data {
+    do {
+        let dataAsJSON = try JSONSerialization.jsonObject(with: data)
+        let prettyData = try JSONSerialization.data(withJSONObject: dataAsJSON, options: .prettyPrinted)
+        return prettyData
+    } catch {
+        return data //fallback to original data if it cant be serialized
+    }
+} 
 //let metroProvider = MoyaProvider<HandMetro>()//
 let metroProvider = MoyaProvider<HandMetro>(plugins: [NetworkLoggerPlugin(verbose: false),Plugin()])//
 
@@ -124,7 +133,7 @@ extension HandMetro: TargetType {
     }
     
     
-    public var baseURL: URL { return URL(string: "HMConst.HOST_URL")! }
+    public var baseURL: URL { return URL(string: "http://metro.wifi8.com")! }
     
     public var method: Moya.Method {
         //        switch self {
@@ -226,3 +235,4 @@ extension HandMetro {
 }
 
 fileprivate let networkQueue: DispatchQueue = DispatchQueue(label: "HMAPI.network")
+

@@ -8,6 +8,8 @@ PODS:
     - RxSwift (~> 4.0)
   - Result (4.1.0)
   - RxAtomic (4.4.1)
+  - RxCocoa (4.4.1):
+    - RxSwift (~> 4.0)
   - RxSwift (4.4.1):
     - RxAtomic (~> 4.4)
   - WQPackage (0.1.0):
@@ -17,6 +19,7 @@ PODS:
 
 DEPENDENCIES:
   - Moya/RxSwift
+  - RxCocoa
   - WQPackage (from `../`)
 
 SPEC REPOS:
@@ -25,6 +28,7 @@ SPEC REPOS:
     - Moya
     - Result
     - RxAtomic
+    - RxCocoa
     - RxSwift
 
 EXTERNAL SOURCES:
@@ -36,9 +40,10 @@ SPEC CHECKSUMS:
   Moya: cf730b3cd9e005401ef37a85143aa141a12fd38f
   Result: bd966fac789cc6c1563440b348ab2598cc24d5c7
   RxAtomic: f8d6adc1ccb87a767811269e4875887bc74dbf19
+  RxCocoa: 2f35a76bf8887872e28a1914112395b11b8e0e64
   RxSwift: 92fcf68dfef21f3e2ab1965363d9e7b3d787597e
   WQPackage: bac3bd1ed25f2f62fa1f6624610b49615db19402
 
-PODFILE CHECKSUM: be62b7befc0340c4f0aa26929663b89aa4aa44d1
+PODFILE CHECKSUM: 8fbdd42b498ce677189784837f3cf4aa69c1bd9d
 
 COCOAPODS: 1.6.0

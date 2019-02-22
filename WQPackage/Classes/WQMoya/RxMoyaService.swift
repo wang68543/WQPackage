@@ -6,22 +6,95 @@
 //
 
 import Foundation
+//import UIKit
 import Moya
 import RxSwift
 //public protocol RxMoyaTargetType: TargetType {
 //    associatedtype Response: Decodable
 //}
+public protocol MoyaServiceSerialization {
+    /// 响应模型
+    func responseSerialization<Element>(for request: URLRequest?, json: Any) throws -> Element
+}
 open class RxMoyaService<API: TargetType> {
     public let provider: MoyaProvider<API>
     public init(_ provider: MoyaProvider<API>) {
         self.provider = provider
     }
-   public func request(_ token: API, callbackQueue: DispatchQueue? = nil) -> Single<Response> {
+    /// 自定义模型解析 解决对象里面包含Any 无法使用Codable 自动转换
+    public func request<Element>(_ token: API, decoder: MoyaServiceSerialization, callbackQueue: DispatchQueue? = nil) -> Single<Element> {
         return Single.create { [weak self] single in
             let cancellableToken = self?.provider.request(token, callbackQueue: callbackQueue, progress: nil) { result in
                 switch result {
                 case let .success(response):
-                    single(.success(response))
+                    do {
+                        let json = try response.mapJSON()
+                        let model: Element = try decoder.responseSerialization(for: response.request, json: json)
+                        single(.success(model))
+                    } catch let error {
+                        debugPrint("转换失败\(error.localizedDescription)")
+                        single(.error(error))
+                    }
+                case let .failure(error):
+                    single(.error(error))
+                }
+            }
+            return Disposables.create {
+                cancellableToken?.cancel()
+            }
+        }
+    }
+    /// 整个对象都是支持Codable
+    public func request<T: Decodable>(_ token: API, callbackQueue: DispatchQueue? = nil, atKeyPath keyPath: String? = nil, using decoder: JSONDecoder = JSONDecoder(), failsOnEmptyData: Bool = true) -> Single<T> {
+        return Single.create { [weak self] single in
+            
+            let cancellableToken = self?.provider.request(token, callbackQueue: callbackQueue, progress: nil) { result in
+                switch result {
+                case let .success(response):
+                do {
+                    let model = try response.map(T.self, atKeyPath: keyPath, using: decoder, failsOnEmptyData: failsOnEmptyData)
+                    single(.success(model))
+                }catch let DecodingError.dataCorrupted(context) {
+                    debugPrint(context)
+                    single(.error(DecodingError.dataCorrupted(context)))
+                } catch let DecodingError.keyNotFound(key, context) {
+                    debugPrint("Key '\(key)' not found:", context.debugDescription)
+                    debugPrint("codingPath:", context.codingPath)
+                    single(.error(DecodingError.keyNotFound(key, context)))
+                } catch let DecodingError.valueNotFound(value, context) {
+                    debugPrint("Value '\(value)' not found:", context.debugDescription)
+                    debugPrint("codingPath:", context.codingPath)
+                    single(.error(DecodingError.valueNotFound(value, context)))
+                } catch let DecodingError.typeMismatch(type, context)  {
+                    debugPrint("Type '\(type)' mismatch:", context.debugDescription)
+                    debugPrint("codingPath:", context.codingPath)
+                    single(.error(DecodingError.typeMismatch(type, context)))
+                }  catch let error {
+                    debugPrint("转换失败\(error.localizedDescription)")
+                    single(.error(error))
+                }
+                case let .failure(error):
+                    single(.error(error))
+                }
+            }
+            return Disposables.create {
+                cancellableToken?.cancel()
+            }
+        }
+    }
+    /// 直接响应为Json
+    public func requestJSON(_ token: API, callbackQueue: DispatchQueue? = nil) -> Single<Any> {
+        return Single.create { [weak self] single in
+            let cancellableToken = self?.provider.request(token, callbackQueue: callbackQueue, progress: nil) { result in
+                switch result {
+                case let .success(response):
+                    do {
+                        let json = try response.mapJSON()
+                        single(.success(json))
+                    } catch let error {
+                        debugPrint("转换失败\(error.localizedDescription)")
+                        single(.error(error))
+                    }
                 case let .failure(error):
                     single(.error(error))
                 }
@@ -63,3 +136,19 @@ open class RxMoyaService<API: TargetType> {
     }
 }
 
+extension ObservableType where E == Response {
+    /// Maps data received from the signal into a JSON object. If the conversion fails, the signal errors.
+    public func mapJSON(failsOnEmptyData: Bool = true) -> Observable<Any> {
+        return flatMap { Observable.just(try $0.mapJSON(failsOnEmptyData: failsOnEmptyData)) }
+    }
+    
+    /// Maps received data at key path into a String. If the conversion fails, the signal errors.
+    public func mapString(atKeyPath keyPath: String? = nil) -> Observable<String> {
+        return flatMap { Observable.just(try $0.mapString(atKeyPath: keyPath)) }
+    }
+    
+    /// Maps received data at key path into a Decodable object. If the conversion fails, the signal errors.
+    public func map<D: Decodable>(_ type: D.Type, atKeyPath keyPath: String? = nil, using decoder: JSONDecoder = JSONDecoder(), failsOnEmptyData: Bool = true) -> Observable<D> {
+        return flatMap { Observable.just(try $0.map(type, atKeyPath: keyPath, using: decoder, failsOnEmptyData: failsOnEmptyData)) }
+    }
+}

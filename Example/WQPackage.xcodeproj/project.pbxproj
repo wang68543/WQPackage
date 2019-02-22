@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		06BBA56B221EB35100435988 /* Service.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06BBA56A221EB35100435988 /* Service.swift */; };
+		06BFBA7E221FD31900C8C26E /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06BFBA7D221FD31900C8C26E /* Constants.swift */; };
 		607FACD61AFB9204008FA782 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 607FACD51AFB9204008FA782 /* AppDelegate.swift */; };
 		607FACD81AFB9204008FA782 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 607FACD71AFB9204008FA782 /* ViewController.swift */; };
 		607FACDB1AFB9204008FA782 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 607FACD91AFB9204008FA782 /* Main.storyboard */; };
@@ -30,6 +31,7 @@
 
 /* Begin PBXFileReference section */
 		06BBA56A221EB35100435988 /* Service.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Service.swift; sourceTree = "<group>"; };
+		06BFBA7D221FD31900C8C26E /* Constants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
 		45F8007878313E08B60622D0 /* Pods_WQPackage_Tests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_WQPackage_Tests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		607FACD01AFB9204008FA782 /* WQPackage_Example.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = WQPackage_Example.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		607FACD41AFB9204008FA782 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -82,6 +84,14 @@
 			path = Pods;
 			sourceTree = "<group>";
 		};
+		06BFBA7C221FD1F900C8C26E /* Template */ = {
+			isa = PBXGroup;
+			children = (
+				06BFBA7D221FD31900C8C26E /* Constants.swift */,
+			);
+			path = Template;
+			sourceTree = "<group>";
+		};
 		607FACC71AFB9204008FA782 = {
 			isa = PBXGroup;
 			children = (
@@ -106,6 +116,7 @@
 		607FACD21AFB9204008FA782 /* Example for WQPackage */ = {
 			isa = PBXGroup;
 			children = (
+				06BFBA7C221FD1F900C8C26E /* Template */,
 				607FACD51AFB9204008FA782 /* AppDelegate.swift */,
 				607FACD71AFB9204008FA782 /* ViewController.swift */,
 				607FACD91AFB9204008FA782 /* Main.storyboard */,
@@ -325,6 +336,7 @@
 				"${BUILT_PRODUCTS_DIR}/Moya/Moya.framework",
 				"${BUILT_PRODUCTS_DIR}/Result/Result.framework",
 				"${BUILT_PRODUCTS_DIR}/RxAtomic/RxAtomic.framework",
+				"${BUILT_PRODUCTS_DIR}/RxCocoa/RxCocoa.framework",
 				"${BUILT_PRODUCTS_DIR}/RxSwift/RxSwift.framework",
 				"${BUILT_PRODUCTS_DIR}/WQPackage/WQPackage.framework",
 			);
@@ -336,6 +348,7 @@
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Moya.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Result.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/RxAtomic.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/RxCocoa.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/RxSwift.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/WQPackage.framework",
 			);
@@ -354,6 +367,7 @@
 				607FACD81AFB9204008FA782 /* ViewController.swift in Sources */,
 				607FACD61AFB9204008FA782 /* AppDelegate.swift in Sources */,
 				06BBA56B221EB35100435988 /* Service.swift in Sources */,
+				06BFBA7E221FD31900C8C26E /* Constants.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
