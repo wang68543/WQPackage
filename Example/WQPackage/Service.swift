@@ -24,9 +24,25 @@ private func JSONResponseDataFormatter(_ data: Data) -> Data {
     } catch {
         return data //fallback to original data if it cant be serialized
     }
-} 
+}
+fileprivate func defaultRequestMapping(for endpoint: Endpoint, closure: MoyaProvider<HandMetro>.RequestResultClosure) {
+    do {
+        var urlRequest = try endpoint.urlRequest()
+        // 加密参数
+        urlRequest.httpBody = Data()
+        //设置超时时间
+        closure(.success(urlRequest))
+    } catch MoyaError.requestMapping(let url) {
+        closure(.failure(MoyaError.requestMapping(url)))
+    } catch MoyaError.parameterEncoding(let error) {
+        closure(.failure(MoyaError.parameterEncoding(error)))
+    } catch {
+        closure(.failure(MoyaError.underlying(error, nil)))
+    }
+}
+
 //let metroProvider = MoyaProvider<HandMetro>()//
-let metroProvider = MoyaProvider<HandMetro>(plugins: [NetworkLoggerPlugin(verbose: false),Plugin()])//
+let metroProvider = MoyaProvider<HandMetro>(requestClosure: defaultRequestMapping,plugins: [NetworkLoggerPlugin(verbose: false),Plugin()])//
 
 // MARK: - Provider support
 public enum HandMetro {
