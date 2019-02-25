@@ -14,7 +14,7 @@ import RxSwift
 //}
 public protocol MoyaServiceSerialization {
     /// 响应模型
-    func responseSerialization<Element>(for request: URLRequest?, json: Any) throws -> Element
+    func responseSerialization<Element>(for request: URLRequest?, response: Moya.Response) throws -> Element
 }
 open class RxMoyaService<API: TargetType> {
     public let provider: MoyaProvider<API>
@@ -27,13 +27,12 @@ open class RxMoyaService<API: TargetType> {
             let cancellableToken = self?.provider.request(token, callbackQueue: callbackQueue, progress: nil) { result in
                 switch result {
                 case let .success(response):
-                    do {
-                        let json = try response.mapJSON()
-                        let model: Element = try decoder.responseSerialization(for: response.request, json: json)
+                    do { 
+                        let model: Element = try decoder.responseSerialization(for: response.request, response: response)
                         single(.success(model))
                     } catch let error {
                         debugPrint("转换失败\(error.localizedDescription)")
-                        single(.error(error))
+                        single(.error(MoyaError.objectMapping(error, response)))
                     }
                 case let .failure(error):
                     single(.error(error))
@@ -47,7 +46,6 @@ open class RxMoyaService<API: TargetType> {
     /// 整个对象都是支持Codable
     public func request<T: Decodable>(_ token: API, callbackQueue: DispatchQueue? = nil, atKeyPath keyPath: String? = nil, using decoder: JSONDecoder = JSONDecoder(), failsOnEmptyData: Bool = true) -> Single<T> {
         return Single.create { [weak self] single in
-            
             let cancellableToken = self?.provider.request(token, callbackQueue: callbackQueue, progress: nil) { result in
                 switch result {
                 case let .success(response):
@@ -56,22 +54,26 @@ open class RxMoyaService<API: TargetType> {
                     single(.success(model))
                 }catch let DecodingError.dataCorrupted(context) {
                     debugPrint(context)
-                    single(.error(DecodingError.dataCorrupted(context)))
+                    let error = DecodingError.dataCorrupted(context)
+                    single(.error(MoyaError.objectMapping(error, response)))
                 } catch let DecodingError.keyNotFound(key, context) {
                     debugPrint("Key '\(key)' not found:", context.debugDescription)
                     debugPrint("codingPath:", context.codingPath)
-                    single(.error(DecodingError.keyNotFound(key, context)))
+                    let error = DecodingError.keyNotFound(key, context)
+                    single(.error(MoyaError.objectMapping(error, response)))
                 } catch let DecodingError.valueNotFound(value, context) {
                     debugPrint("Value '\(value)' not found:", context.debugDescription)
                     debugPrint("codingPath:", context.codingPath)
-                    single(.error(DecodingError.valueNotFound(value, context)))
+                    let error = DecodingError.valueNotFound(value, context)
+                    single(.error(MoyaError.objectMapping(error, response)))
                 } catch let DecodingError.typeMismatch(type, context)  {
                     debugPrint("Type '\(type)' mismatch:", context.debugDescription)
                     debugPrint("codingPath:", context.codingPath)
-                    single(.error(DecodingError.typeMismatch(type, context)))
+                    let error = DecodingError.typeMismatch(type, context)
+                    single(.error(MoyaError.objectMapping(error, response)))
                 }  catch let error {
                     debugPrint("转换失败\(error.localizedDescription)")
-                    single(.error(error))
+                    single(.error(MoyaError.objectMapping(error, response)))
                 }
                 case let .failure(error):
                     single(.error(error))
@@ -93,7 +95,7 @@ open class RxMoyaService<API: TargetType> {
                         single(.success(json))
                     } catch let error {
                         debugPrint("转换失败\(error.localizedDescription)")
-                        single(.error(error))
+                        single(.error(MoyaError.jsonMapping(response)))
                     }
                 case let .failure(error):
                     single(.error(error))
