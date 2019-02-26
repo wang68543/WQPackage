@@ -12,9 +12,14 @@ import RxSwift
 //public protocol RxMoyaTargetType: TargetType {
 //    associatedtype Response: Decodable
 //}
-public protocol MoyaServiceSerialization {
+open class MoyaDecoder<Element> {
+    public init() {
+        // using default init 
+    }
     /// 响应模型
-    func responseSerialization<Element>(for request: URLRequest?, response: Moya.Response) throws -> Element
+    open func responseSerialization(for request: URLRequest?, response: Moya.Response) throws -> Element {
+        fatalError("必须子类实现")
+    }
 }
 open class RxMoyaService<API: TargetType> {
     public let provider: MoyaProvider<API>
@@ -22,12 +27,12 @@ open class RxMoyaService<API: TargetType> {
         self.provider = provider
     }
     /// 自定义模型解析 解决对象里面包含Any 无法使用Codable 自动转换
-    public func request<Element>(_ token: API, decoder: MoyaServiceSerialization, callbackQueue: DispatchQueue? = nil) -> Single<Element> {
+    public func request<Element>(_ token: API, decoder: MoyaDecoder<Element>, callbackQueue: DispatchQueue? = nil) -> Single<Element> {
         return Single.create { [weak self] single in
             let cancellableToken = self?.provider.request(token, callbackQueue: callbackQueue, progress: nil) { result in
                 switch result {
                 case let .success(response):
-                    do { 
+                    do {
                         let model: Element = try decoder.responseSerialization(for: response.request, response: response)
                         single(.success(model))
                     } catch let error {
@@ -137,7 +142,36 @@ open class RxMoyaService<API: TargetType> {
         }
     }
 }
-
+//public extension Data {
+//    public func mapObject<D: Decoder>(_ type: D.Type, atKeyPath keyPath: String? = nil, using decoder: JSONDecoder = JSONDecoder(), failsOnEmptyData: Bool = true) {
+//        do {
+//            let model = try response.map(T.self, atKeyPath: keyPath, using: decoder, failsOnEmptyData: failsOnEmptyData)
+//            single(.success(model))
+//        }catch let DecodingError.dataCorrupted(context) {
+//            debugPrint(context)
+//            let error = DecodingError.dataCorrupted(context)
+//            single(.error(MoyaError.objectMapping(error, response)))
+//        } catch let DecodingError.keyNotFound(key, context) {
+//            debugPrint("Key '\(key)' not found:", context.debugDescription)
+//            debugPrint("codingPath:", context.codingPath)
+//            let error = DecodingError.keyNotFound(key, context)
+//            single(.error(MoyaError.objectMapping(error, response)))
+//        } catch let DecodingError.valueNotFound(value, context) {
+//            debugPrint("Value '\(value)' not found:", context.debugDescription)
+//            debugPrint("codingPath:", context.codingPath)
+//            let error = DecodingError.valueNotFound(value, context)
+//            single(.error(MoyaError.objectMapping(error, response)))
+//        } catch let DecodingError.typeMismatch(type, context)  {
+//            debugPrint("Type '\(type)' mismatch:", context.debugDescription)
+//            debugPrint("codingPath:", context.codingPath)
+//            let error = DecodingError.typeMismatch(type, context)
+//            single(.error(MoyaError.objectMapping(error, response)))
+//        }  catch let error {
+//            debugPrint("转换失败\(error.localizedDescription)")
+//            single(.error(MoyaError.objectMapping(error, response)))
+//        }
+//    }
+//}
 extension ObservableType where E == Response {
     /// Maps data received from the signal into a JSON object. If the conversion fails, the signal errors.
     public func mapJSON(failsOnEmptyData: Bool = true) -> Observable<Any> {
